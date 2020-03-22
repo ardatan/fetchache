@@ -1,0 +1,63 @@
+{
+    "name": "fetchache",
+    "version": "0.0.3",
+    "description": "Cross Platform Fetch with Key Value Cache support",
+    "repository": "git@github.com:ardatan/fetch-with-cache.git",
+    "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
+    "license": "MIT",
+    "scripts": {
+        "lint": "tslint src/**/*.ts",
+        "clean": "rimraf dist",
+        "prebuild": "yarn clean",
+        "build": "bob",
+        "prepack": "bob-update-version",
+        "test": "jest --passWithNoTests --no-watchman --config ./jest.config.js"
+    },
+    "sideEffects": false,
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "typings": "dist/index.d.ts",
+    "typescript": {
+        "definition": "dist/index.d.ts"
+    },
+    "buildOptions": {
+        "input": "./src/index.ts"
+    },
+    "dependencies": {
+        "http-cache-semantics": "4.1.0",
+        "cross-fetch": "3.0.4"
+    },
+    "devDependencies": {
+        "@types/http-cache-semantics": "4.0.0",
+        "bob-the-bundler": "0.3.4",
+        "jest": "25.1.0",
+        "ts-jest": "25.2.1",
+        "typescript": "3.8.3",
+        "husky": "4.2.3",
+        "lint-staged": "10.0.8",
+        "tslint": "6.1.0",
+        "prettier": "2.0.1"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "engines": {
+        "node": ">=10"
+    },
+    "lint-staged": {
+        "packages/**/src/**/*.{ts,tsx}": [
+            "tslint --fix",
+            "git add"
+        ],
+        "packages/**/*.{js,json,css,md,ts,tsx}": [
+            "prettier --write",
+            "git add -f"
+        ]
+    },
+    "publishConfig": {
+        "access": "public",
+        "directory": "dist"
+    }
+}

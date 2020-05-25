@@ -812,10 +812,10 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
-bob-the-bundler@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.0.1.tgz#823ff4d9a64b0c0b59159b2679e6cdb690554b9f"
-  integrity sha512-dP8HRgVD+zHDQ96+e33Olm8eqHrsh1y3TGjd+DPFKC/EpduQ43yhCc+wJUPjshOepTpPIiQYG58aWD90WypPbg==
+bob-the-bundler@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/bob-the-bundler/-/bob-the-bundler-1.0.2.tgz#f44e7315ead242e328171fcba42e9bcc1a457c31"
+  integrity sha512-tBLAekXApxF4yiIt26orEAzo1DM4ESnKGaTcGLjez7XlGbCqMJqzo1dBiohiNkv6qZJ1YoxLqZS16RNiSft/Aw==
   dependencies:
     "@rollup/plugin-node-resolve" "7.1.1"
     consola "2.11.3"

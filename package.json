@@ -32,7 +32,7 @@
         "bob-the-bundler": "1.0.2",
         "jest": "25.5.4",
         "ts-jest": "25.3.1",
-        "typescript": "3.8.3",
+        "typescript": "3.9.5",
         "husky": "4.2.5",
         "lint-staged": "10.2.6",
         "tslint": "6.1.1",

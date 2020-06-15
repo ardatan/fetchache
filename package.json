@@ -34,7 +34,7 @@
         "ts-jest": "25.5.1",
         "typescript": "3.9.5",
         "husky": "4.2.5",
-        "lint-staged": "10.2.6",
+        "lint-staged": "10.2.10",
         "tslint": "6.1.2",
         "prettier": "2.0.5"
     },

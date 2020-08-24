@@ -30,7 +30,7 @@
     "devDependencies": {
         "@types/http-cache-semantics": "4.0.0",
         "bob-the-bundler": "1.1.0",
-        "jest": "26.4.1",
+        "jest": "26.4.2",
         "ts-jest": "26.2.0",
         "typescript": "3.9.7",
         "husky": "4.2.5",

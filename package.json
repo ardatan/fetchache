@@ -1,6 +1,6 @@
 {
     "name": "fetchache",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Cross Platform Fetch with Key Value Cache support",
     "repository": "git@github.com:ardatan/fetch-with-cache.git",
     "author": "Arda TANRIKULU <ardatanrikulu@gmail.com>",
@@ -9,8 +9,8 @@
         "lint": "tslint src/**/*.ts",
         "clean": "rimraf dist",
         "prebuild": "yarn clean",
-        "build": "bob",
-        "prepack": "bob-update-version",
+        "build": "bob build --single",
+        "prepack": "bob prepack",
         "test": "jest --passWithNoTests --no-watchman --config ./jest.config.js"
     },
     "sideEffects": false,

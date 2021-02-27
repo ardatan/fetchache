@@ -94,7 +94,7 @@ async function storeResponseAndReturnClone(
         ? originalPolicyObject
         : {
             ...originalPolicyObject,
-            rescc: { 'must-revalidate': null },
+            rescc: { 'must-revalidate': false },
         };
     const entry = JSON.stringify({
         policy: policyObject,

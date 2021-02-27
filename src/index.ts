@@ -1,9 +1,14 @@
 import CachePolicy from 'http-cache-semantics';
 import { fetch, Request, Response } from 'cross-fetch';
 
-export async function fetchache(request: Request, cache: KeyValueCache) {
+export async function fetchache(request: Request, cache: KeyValueCache, options?: FetchacheOptions) {
+    const { forceRevalidationBypass = false } = options || {}
     const cacheKey = request.url;
     const entry = await cache.get(cacheKey);
+
+    // We must state we accept stale responses or 'satisfiesWithoutRevalidation' will always be false
+    request.headers.set('cache-control', 'max-stale');
+
     if (!entry) {
         const response = await fetch(request);
 
@@ -17,6 +22,7 @@ export async function fetchache(request: Request, cache: KeyValueCache) {
             response,
             policy,
             cacheKey,
+            forceRevalidationBypass
         );
     }
 
@@ -33,31 +39,32 @@ export async function fetchache(request: Request, cache: KeyValueCache) {
             status: (policy as any)._status,
             headers,
         } as ResponseInit);
-    } else {
-        const revalidationHeaders = policy.revalidationHeaders(
-            policyRequestFrom(request),
-        );
-        const revalidationRequest = new Request(request, {
-            headers: revalidationHeaders as HeadersInit,
-        });
-        const revalidationResponse = await fetch(revalidationRequest);
-
-        const { policy: revalidatedPolicy, modified } = policy.revalidatedPolicy(
-            policyRequestFrom(revalidationRequest),
-            policyResponseFrom(revalidationResponse),
-        );
-
-        return storeResponseAndReturnClone(
-            cache,
-            new Response(modified ? await revalidationResponse.text() : body, {
-                url: (revalidatedPolicy as any)._url,
-                status: (revalidatedPolicy as any)._status,
-                headers: (revalidatedPolicy as any).responseHeaders(),
-            } as ResponseInit),
-            revalidatedPolicy,
-            cacheKey,
-        );
     }
+
+    const revalidationHeaders = policy.revalidationHeaders(
+        policyRequestFrom(request),
+    );
+    const revalidationRequest = new Request(request, {
+        headers: revalidationHeaders as HeadersInit,
+    });
+    const revalidationResponse = await fetch(revalidationRequest);
+
+    const { policy: revalidatedPolicy, modified } = policy.revalidatedPolicy(
+        policyRequestFrom(revalidationRequest),
+        policyResponseFrom(revalidationResponse),
+    );
+
+    return storeResponseAndReturnClone(
+        cache,
+        new Response(modified ? await revalidationResponse.text() : body, {
+            url: (revalidatedPolicy as any)._url,
+            status: (revalidatedPolicy as any)._status,
+            headers: (revalidatedPolicy as any).responseHeaders(),
+        } as ResponseInit),
+        revalidatedPolicy,
+        cacheKey,
+        forceRevalidationBypass
+    );
 }
 
 export * from 'cross-fetch';
@@ -69,10 +76,11 @@ async function storeResponseAndReturnClone(
     response: Response,
     policy: CachePolicy,
     cacheKey: string,
+    forceRevalidationBypass?: boolean
 ): Promise<Response> {
 
     let ttl = Math.round(policy.timeToLive() / 1000);
-    if (ttl <= 0) return response;
+    if (!forceRevalidationBypass && ttl <= 0) return response;
 
     // If a response can be revalidated, we don't want to remove it from the cache right after it expires.
     // We may be able to use better heuristics here, but for now we'll take the max-age times 2.
@@ -81,8 +89,15 @@ async function storeResponseAndReturnClone(
     }
 
     const body = await response.text();
+    const originalPolicyObject = policy.toObject();
+    const policyObject = !forceRevalidationBypass
+        ? originalPolicyObject
+        : {
+            ...originalPolicyObject,
+            rescc: { 'must-revalidate': null },
+        };
     const entry = JSON.stringify({
-        policy: policy.toObject(),
+        policy: policyObject,
         body,
     });
 
@@ -127,6 +142,10 @@ function headersToObject(headers: Headers) {
         object[key] = val;
     });
     return object;
+}
+
+export interface FetchacheOptions {
+    forceRevalidationBypass: boolean;
 }
 
 export interface KeyValueCacheSetOptions {
